@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Dismissable error/info banner for auth screens
 class AuthErrorBanner extends StatefulWidget {
   final String message;
   final bool isError;

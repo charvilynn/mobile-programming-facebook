@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Full-screen loading overlay with blur effect
+/// Widget 9 (Aaron): Full-screen loading overlay with blur effect
 class LoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final Widget child;
