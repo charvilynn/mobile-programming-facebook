@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Primary CTA button with loading state
-/// Always renders full-width — wrap with SizedBox if you need a bounded width.
 class AuthPrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -42,7 +40,6 @@ class AuthPrimaryButton extends StatelessWidget {
             ],
           );
 
-    // Full-width style for auth screens — always inside Column, never in Row
     final fullWidthStyle = ButtonStyle(
       minimumSize: WidgetStateProperty.all(const Size(double.infinity, 48)),
     );
