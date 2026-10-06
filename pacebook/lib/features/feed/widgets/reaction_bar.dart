@@ -1,3 +1,9 @@
+import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_typography.dart';
+import '../../../core/constants/app_spacing.dart';
+import 'post_card.dart';
+
 class ReactionBar extends StatefulWidget {
   final PostData post;
   final VoidCallback? onLongPressReact;
