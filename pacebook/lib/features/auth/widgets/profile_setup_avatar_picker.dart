@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/theme/app_colors.dart';
 
-/// Widget 8 (Aaron): Avatar picker for profile setup screen
+
 class ProfileSetupAvatarPicker extends StatefulWidget {
   final void Function(String? imagePath) onImageSelected;
   final String? initialImagePath;
