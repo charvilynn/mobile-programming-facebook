@@ -897,3 +897,207 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
     );
   }
 }
+
+class EventCard extends StatelessWidget {
+  final EventModel event;
+  final VoidCallback? onTap;
+  final VoidCallback? onAttend;
+
+  const EventCard({super.key, required this.event, this.onTap, this.onAttend});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.borderSubtle),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Date badge
+            Container(
+              width: 52,
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.cyan.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    _monthShort(event.startTime),
+                    style: AppTypography.labelSm
+                        .copyWith(color: AppColors.cyan, fontSize: 10),
+                  ),
+                  Text(
+                    '${event.startTime.day}',
+                    style: AppTypography.h2.copyWith(
+                        color: AppColors.cyan, fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(event.name,
+                      style: AppTypography.labelMd.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  if (event.location != null)
+                    Row(
+                      children: [
+                        Icon(Icons.location_on_outlined,
+                            size: 12, color: AppColors.textMuted),
+                        const SizedBox(width: 2),
+                        Expanded(
+                          child: Text(event.location!,
+                              style: AppTypography.labelSm
+                                  .copyWith(color: AppColors.textMuted),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 4),
+                  Text('${event.attendeeCount} hadir',
+                      style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: onAttend,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    event.isAttending ? AppColors.bgSurface : AppColors.cyan,
+                foregroundColor: event.isAttending
+                    ? AppColors.textSecondary
+                    : AppColors.bgDeep,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 6),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(event.isAttending ? 'Hadir' : 'Ikut',
+                  style: AppTypography.labelSm.copyWith(
+                      fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _monthShort(DateTime dt) {
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return months[dt.month - 1];
+  }
+}
+
+class EventCalendarStrip extends StatefulWidget {
+  final DateTime selectedDate;
+  final void Function(DateTime) onDateSelected;
+  final Set<DateTime> eventDates;
+
+  const EventCalendarStrip({
+    super.key,
+    required this.selectedDate,
+    required this.onDateSelected,
+    this.eventDates = const {},
+  });
+
+  @override
+  State<EventCalendarStrip> createState() => _EventCalendarStripState();
+}
+
+class _EventCalendarStripState extends State<EventCalendarStrip> {
+  late DateTime _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.selectedDate;
+  }
+
+  static const _days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+  @override
+  Widget build(BuildContext context) {
+    final today = DateTime.now();
+    return SizedBox(
+      height: 72,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+        itemCount: 14,
+        itemBuilder: (_, i) {
+          final date = today.add(Duration(days: i));
+          final isSelected = _selected.day == date.day &&
+              _selected.month == date.month;
+          final hasEvent = widget.eventDates.any((e) =>
+              e.day == date.day && e.month == date.month);
+
+          return GestureDetector(
+            onTap: () {
+              setState(() => _selected = date);
+              widget.onDateSelected(date);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
+              width: 44,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.cyan
+                    : AppColors.bgSurface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: isSelected
+                        ? AppColors.cyan
+                        : AppColors.borderSubtle),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(_days[date.weekday % 7],
+                      style: AppTypography.labelSm.copyWith(
+                          color: isSelected
+                              ? AppColors.bgDeep
+                              : AppColors.textMuted,
+                          fontSize: 10)),
+                  Text('${date.day}',
+                      style: AppTypography.labelMd.copyWith(
+                          color: isSelected
+                              ? AppColors.bgDeep
+                              : AppColors.textPrimary,
+                          fontWeight: FontWeight.w700)),
+                  if (hasEvent)
+                    Container(
+                      width: 4, height: 4,
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.bgDeep : AppColors.magenta,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
