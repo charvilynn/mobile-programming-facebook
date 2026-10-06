@@ -6,6 +6,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/constants/app_spacing.dart';
 
+import '../models/user_profile.dart';
+
 // Smart Image Helpers
 ImageProvider? getSmartImageProvider(String? url) {
   if (url == null || url.trim().isEmpty) return null;
@@ -849,6 +851,9 @@ class _DetailRow extends StatelessWidget {
 }
 
 // FriendsGridCard
+/// Section matching Facebook's "Friends" grid:
+/// - "Friends" header + count + "See all" action
+/// - Real friends grid (3x2) or empty state with button to Jelajah
 class FriendsGridCard extends StatelessWidget {
   final int totalFriends;
   final List<UserProfile> friends;
@@ -878,6 +883,7 @@ class FriendsGridCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header: Friends (count) + See all
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -894,9 +900,7 @@ class FriendsGridCard extends StatelessWidget {
                   ),
                   Text(
                     '$totalFriends teman',
-                    style: AppTypography.labelSm.copyWith(
-                      color: AppColors.textMuted,
-                    ),
+                    style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -915,19 +919,17 @@ class FriendsGridCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
 
+          // Real friends or Empty State
           if (friends.isEmpty || totalFriends == 0)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(
-                vertical: AppSpacing.lg,
-                horizontal: AppSpacing.md,
-              ),
+                  vertical: AppSpacing.lg, horizontal: AppSpacing.md),
               decoration: BoxDecoration(
                 color: AppColors.bgSurface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.borderSubtle.withValues(alpha: 0.6),
-                ),
+                    color: AppColors.borderSubtle.withValues(alpha: 0.6)),
               ),
               child: Column(
                 children: [
@@ -937,11 +939,8 @@ class FriendsGridCard extends StatelessWidget {
                       color: AppColors.cyan.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.people_outline_rounded,
-                      size: 28,
-                      color: AppColors.cyan,
-                    ),
+                    child: Icon(Icons.people_outline_rounded,
+                        size: 28, color: AppColors.cyan),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
@@ -964,11 +963,8 @@ class FriendsGridCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
                   OutlinedButton.icon(
                     onPressed: onFindFriends,
-                    icon: Icon(
-                      Icons.explore_outlined,
-                      size: 16,
-                      color: AppColors.cyan,
-                    ),
+                    icon: Icon(Icons.explore_outlined,
+                        size: 16, color: AppColors.cyan),
                     label: Text(
                       'Cari Teman di Jelajah',
                       style: AppTypography.labelMd.copyWith(
@@ -979,18 +975,16 @@ class FriendsGridCard extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: AppColors.cyan),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                          borderRadius: BorderRadius.circular(20)),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                          horizontal: 16, vertical: 8),
                     ),
                   ),
                 ],
               ),
             )
           else
+            // 3x2 Grid
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -1021,17 +1015,15 @@ class FriendsGridCard extends StatelessWidget {
                                   )
                                 : null,
                           ),
+                          alignment: Alignment.center,
                           child: avatar == null
-                              ? Center(
-                                  child: Text(
-                                    f.name.isNotEmpty
-                                        ? f.name[0].toUpperCase()
-                                        : '?',
-                                    style: TextStyle(
-                                      color: AppColors.cyan,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                              ? Text(
+                                  f.name.isNotEmpty
+                                      ? f.name[0].toUpperCase()
+                                      : '?',
+                                  style: AppTypography.h3.copyWith(
+                                    color: AppColors.cyan,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 )
                               : null,
@@ -1043,16 +1035,7 @@ class FriendsGridCard extends StatelessWidget {
                         style: AppTypography.labelMd.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '@${f.username}',
-                        style: AppTypography.labelSm.copyWith(
-                          color: AppColors.textMuted,
-                          fontSize: 11,
+                          fontSize: 12,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1793,6 +1776,7 @@ class EditProfileFormField extends StatelessWidget {
 }
 
 // MutualFriendsRow
+/// Stacked avatars + "X koneksi bersama" label.
 class MutualFriendsRow extends StatelessWidget {
   final List<String?> avatarUrls;
   final List<String> names;
@@ -1812,6 +1796,7 @@ class MutualFriendsRow extends StatelessWidget {
     final showing = avatarUrls.take(maxShow).toList();
     return Row(
       children: [
+        // Stacked avatars
         SizedBox(
           width: showing.length * 20.0 + 12,
           height: 28,
@@ -1832,11 +1817,11 @@ class MutualFriendsRow extends StatelessWidget {
                         : null,
                     child: showing[i] == null
                         ? Text(
-                            names.length > i ? names[i][0].toUpperCase() : '?',
+                            names.length > i
+                                ? names[i][0].toUpperCase()
+                                : '?',
                             style: TextStyle(
-                              fontSize: 8,
-                              color: AppColors.cyan,
-                            ),
+                                fontSize: 8, color: AppColors.cyan),
                           )
                         : null,
                   ),
@@ -1845,12 +1830,13 @@ class MutualFriendsRow extends StatelessWidget {
             }),
           ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(width: AppSpacing.xs),
         Expanded(
           child: Text(
             '$totalMutual koneksi bersama',
             style: AppTypography.labelSm.copyWith(
-              color: AppColors.textSecondary,
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
           ),
