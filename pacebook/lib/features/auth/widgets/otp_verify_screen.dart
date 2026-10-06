@@ -25,7 +25,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       return;
     }
     setState(() { _isLoading = true; _errorMessage = null; });
-    await Future.delayed(const Duration(seconds: 1)); // replace with API
+    await Future.delayed(const Duration(seconds: 1)); 
     setState(() => _isLoading = false);
     if (!mounted) return;
     context.go('/feed');

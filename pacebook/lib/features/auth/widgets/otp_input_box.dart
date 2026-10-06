@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Widget 7 (Aaron): 6-digit OTP input with auto-focus between boxes
 class OtpInputBox extends StatefulWidget {
   final int length;
   final void Function(String otp) onCompleted;
