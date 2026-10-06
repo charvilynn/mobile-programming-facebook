@@ -921,7 +921,6 @@ class EventCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Date badge
             Container(
               width: 52,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -1100,4 +1099,130 @@ class _EventCalendarStripState extends State<EventCalendarStrip> {
       ),
     );
   }
+}
+
+class MarketplaceItemCard extends StatelessWidget {
+  final MarketItem item;
+  final VoidCallback? onTap;
+
+  const MarketplaceItemCard({super.key, required this.item, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.borderSubtle),
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image
+            AspectRatio(
+              aspectRatio: 1,
+              child: item.imageUrl != null
+                  ? Image.network(item.imageUrl!, fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _ItemImagePlaceholder())
+                  : _ItemImagePlaceholder(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.title,
+                      style: AppTypography.labelMd.copyWith(
+                          color: AppColors.textPrimary),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Rp ${_formatPrice(item.price)}',
+                    style: AppTypography.labelMd.copyWith(
+                        color: AppColors.cyan, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 2),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: item.condition == 'new'
+                          ? AppColors.success.withValues(alpha: 0.15)
+                          : AppColors.warning.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      item.condition == 'new' ? 'Baru' : 'Bekas',
+                      style: AppTypography.labelSm.copyWith(
+                          color: item.condition == 'new'
+                              ? AppColors.success
+                              : AppColors.warning,
+                          fontSize: 10),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatPrice(double p) {
+    if (p >= 1000000) return '${(p / 1000000).toStringAsFixed(1)}jt';
+    if (p >= 1000) return '${(p / 1000).toStringAsFixed(0)}rb';
+    return p.toStringAsFixed(0);
+  }
+}
+
+class _ItemImagePlaceholder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(
+        color: AppColors.bgSurface,
+        child: Center(
+          child: Icon(Icons.inventory_2_outlined,
+              color: AppColors.textMuted, size: 40),
+        ),
+      );
+}
+
+class MarketplaceCategoryChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const MarketplaceCategoryChip({
+    super.key,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.only(right: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.cyan : AppColors.bgSurface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: isSelected ? AppColors.cyan : AppColors.borderSubtle),
+          ),
+          child: Text(
+            label,
+            style: AppTypography.labelSm.copyWith(
+                color: isSelected ? AppColors.bgDeep : AppColors.textSecondary,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
+          ),
+        ),
+      );
 }
