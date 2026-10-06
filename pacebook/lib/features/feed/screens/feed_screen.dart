@@ -491,4 +491,5 @@ class _FeedError extends StatelessWidget {
           ],
         ),
       );
+    
 }
