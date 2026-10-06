@@ -8,7 +8,6 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/providers/core_providers.dart';
 import '../widgets/chat_widgets.dart';
 
-// ─── Real Chat Rooms Provider ────────────────────────────────────────────────
 final chatRoomsProvider = FutureProvider.autoDispose<List<ChatRoom>>((
   ref,
 ) async {
@@ -71,7 +70,6 @@ final chatRoomsProvider = FutureProvider.autoDispose<List<ChatRoom>>((
   }
 });
 
-// ─── ChatListScreen ───────────────────────────────────────────────────────────
 class ChatListScreen extends ConsumerStatefulWidget {
   const ChatListScreen({super.key});
 
@@ -542,10 +540,6 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   }
 }
 
-// ─── ChatRoomScreen ───────────────────────────────────────────────────────────
-// Supports two modes:
-//   1. DM mode (targetUserId > 0): direct message with a specific user
-//   2. Room mode (roomId > 0): open an existing chat room
 class ChatRoomScreen extends ConsumerStatefulWidget {
   final int roomId;
   final int targetUserId;
@@ -838,7 +832,6 @@ class _ChatRoomScreenState extends ConsumerState<ChatRoomScreen> {
   }
 }
 
-// ─── NotificationCenterScreen ─────────────────────────────────────────────────
 class NotificationCenterScreen extends ConsumerStatefulWidget {
   const NotificationCenterScreen({super.key});
 
