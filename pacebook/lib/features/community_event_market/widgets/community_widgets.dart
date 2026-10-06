@@ -1121,7 +1121,6 @@ class MarketplaceItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
             AspectRatio(
               aspectRatio: 1,
               child: item.imageUrl != null
@@ -1225,4 +1224,122 @@ class MarketplaceCategoryChip extends StatelessWidget {
           ),
         ),
       );
+}
+
+class SettingsMenuTile extends StatelessWidget {
+  final IconData icon;
+  final Color? iconColor;
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool isDestructive;
+
+  const SettingsMenuTile({
+    super.key,
+    required this.icon,
+    this.iconColor,
+    required this.title,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.isDestructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDestructive
+        ? AppColors.error
+        : (iconColor ?? AppColors.textSecondary);
+
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: 2),
+      leading: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, color: color, size: 20),
+      ),
+      title: Text(
+        title,
+        style: AppTypography.labelMd.copyWith(
+          color: isDestructive ? AppColors.error : AppColors.textPrimary,
+        ),
+      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle!,
+              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
+            )
+          : null,
+      trailing: trailing ??
+          Icon(Icons.chevron_right,
+              color: AppColors.textMuted, size: 20),
+    );
+  }
+}
+
+  final bool isDarkMode;
+  final ValueChanged<bool> onChanged;
+
+  const ThemeToggleSwitch({
+    super.key,
+    required this.isDarkMode,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? AppColors.cyan.withValues(alpha: 0.12)
+                  : AppColors.warning.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+              color: isDarkMode ? AppColors.cyan : AppColors.warning,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tema Gelap',
+                  style: AppTypography.labelMd.copyWith(color: AppColors.textPrimary),
+                ),
+                Text(
+                  isDarkMode
+                      ? 'Cyberpunk Dark aktif'
+                      : 'Light Mode aktif',
+                  style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
+                ),
+              ],
+            ),
+          ),
+          Switch.adaptive(
+            value: isDarkMode,
+            activeColor: AppColors.cyan,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
 }
