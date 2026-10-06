@@ -614,6 +614,7 @@ class _ThoughtBubble extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Bubble pill
         Container(
           constraints: const BoxConstraints(maxWidth: 240),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -635,11 +636,8 @@ class _ThoughtBubble extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.music_note_rounded,
-                      size: 12,
-                      color: Color(0xFFE11D48),
-                    ),
+                    const Icon(Icons.music_note_rounded,
+                        size: 12, color: Color(0xFFE11D48)),
                     const SizedBox(width: 3),
                     Flexible(
                       child: Text(
@@ -674,6 +672,7 @@ class _ThoughtBubble extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
+        // Two small thought dots pointing downwards
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -711,55 +710,49 @@ class PersonalDetailsCard extends StatelessWidget {
   final UserProfile profile;
   final VoidCallback? onEdit;
 
-  const PersonalDetailsCard({super.key, required this.profile, this.onEdit});
+  const PersonalDetailsCard({
+    super.key,
+    required this.profile,
+    this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
     final rows = <Widget>[];
 
     if (profile.work != null && profile.work!.trim().isNotEmpty) {
-      rows.add(
-        _DetailRow(
-          icon: Icons.work_outline_rounded,
-          text: 'Bekerja di ${profile.work}',
-        ),
-      );
+      rows.add(_DetailRow(
+        icon: Icons.work_outline_rounded,
+        text: 'Bekerja di ${profile.work}',
+      ));
     }
 
     if (profile.education != null && profile.education!.trim().isNotEmpty) {
-      rows.add(
-        _DetailRow(
-          icon: Icons.school_outlined,
-          text: 'Belajar di ${profile.education}',
-        ),
-      );
+      rows.add(_DetailRow(
+        icon: Icons.school_outlined,
+        text: 'Belajar di ${profile.education}',
+      ));
     }
 
     if (profile.location != null && profile.location!.trim().isNotEmpty) {
-      rows.add(
-        _DetailRow(
-          icon: Icons.location_on_outlined,
-          text: 'Tinggal di ${profile.location}',
-        ),
-      );
+      rows.add(_DetailRow(
+        icon: Icons.location_on_outlined,
+        text: 'Tinggal di ${profile.location}',
+      ));
     }
 
     if (profile.birthday != null && profile.birthday!.trim().isNotEmpty) {
-      rows.add(
-        _DetailRow(
-          icon: Icons.cake_outlined,
-          text: 'Lahir pada ${profile.birthday}',
-        ),
-      );
+      rows.add(_DetailRow(
+        icon: Icons.cake_outlined,
+        text: 'Lahir pada ${profile.birthday}',
+      ));
     }
 
     if (profile.gender != null && profile.gender!.trim().isNotEmpty) {
-      rows.add(
-        _DetailRow(
-          icon: Icons.person_outline,
-          text: 'Jenis kelamin: ${profile.gender}',
-        ),
-      );
+      rows.add(_DetailRow(
+        icon: Icons.person_outline,
+        text: 'Jenis kelamin: ${profile.gender}',
+      ));
     }
 
     return Container(
@@ -787,11 +780,8 @@ class PersonalDetailsCard extends StatelessWidget {
               if (onEdit != null)
                 GestureDetector(
                   onTap: onEdit,
-                  child: Icon(
-                    Icons.edit_outlined,
-                    size: 18,
-                    color: AppColors.cyan,
-                  ),
+                  child: Icon(Icons.edit_outlined,
+                      size: 18, color: AppColors.cyan),
                 ),
             ],
           ),
@@ -820,9 +810,7 @@ class PersonalDetailsCard extends StatelessWidget {
                 onPressed: onEdit,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.cyan,
-                  side: BorderSide(
-                    color: AppColors.cyan.withValues(alpha: 0.4),
-                  ),
+                  side: BorderSide(color: AppColors.cyan.withValues(alpha: 0.4)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -848,7 +836,7 @@ class _DetailRow extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 20, color: AppColors.textMuted),
-        const SizedBox(width: AppSpacing.md),
+        const SizedBox(width: AppSpacing.sm),
         Expanded(
           child: Text(
             text,
