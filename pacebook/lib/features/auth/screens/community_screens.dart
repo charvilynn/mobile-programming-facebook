@@ -7,7 +7,6 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _ctrl = TextEditingController();
   String _query = '';
-  // Track in-flight optimistic updates (userId -> new status)
   final Map<int, String> _optimisticStatus = {};
 
   @override
