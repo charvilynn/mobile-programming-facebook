@@ -9,7 +9,7 @@ import '../widgets/post_card.dart';
 import '../widgets/post_create_widgets.dart';
 import '../widgets/story_bar.dart';
 
-// ─── FeedScreen ───────────────────────────────────────────────────────────────
+// FeedScreen
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
 
@@ -24,6 +24,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   void initState() {
     super.initState();
     _scrollCtrl.addListener(_onScroll);
+ // Load initial posts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(feedProvider.notifier).loadFeed();
     });
@@ -55,7 +56,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         child: CustomScrollView(
           controller: _scrollCtrl,
           slivers: [
-            // ── App Bar ──────────────────────────────────────────────────────
+ // App Bar
             SliverAppBar(
               floating: true,
               snap: true,
@@ -63,6 +64,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
               surfaceTintColor: Colors.transparent,
               title: Row(
                 children: [
+ // Logo mark
                   Container(
                     width: 32, height: 32,
                     decoration: BoxDecoration(
@@ -88,6 +90,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 ],
               ),
               actions: [
+ // (+) Create Dropdown Menu (Post, Story, Note)
                 PopupMenuButton<String>(
                   tooltip: 'Buat Baru',
                   icon: Container(
@@ -224,13 +227,13 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
               ],
             ),
 
-            // ── Create Post Button ────────────────────────────────────────────
+ // Create Post Button
             SliverToBoxAdapter(child: _CreatePostCard()),
 
-            // ── Story Bar ────────────────────────────────────────────────────
+ // Story Bar
             const SliverToBoxAdapter(child: StoryBar()),
 
-            // ── Feed Content ─────────────────────────────────────────────────
+ // Feed Content
             feedState.when(
               loading: () => const SliverFillRemaining(
                 child: Center(child: _FeedLoading()),
@@ -259,6 +262,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                           onShareTap: () => _onShare(ctx, posts[i]),
                         );
                       }
+ // Load-more indicator
                       return Padding(
                         padding: EdgeInsets.all(AppSpacing.md),
                         child: Center(
@@ -281,7 +285,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         ),
       ),
 
-      // ── FAB: Create Post ──────────────────────────────────────────────────
+ // FAB: Create Post
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/create-post'),
         backgroundColor: AppColors.cyan,
@@ -320,7 +324,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 }
 
-// ── Create Post Card ──────────────────────────────────────────────────────────
+// Create Post Card
 class _CreatePostCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -365,7 +369,7 @@ class _CreatePostCard extends ConsumerWidget {
   }
 }
 
-// ── State Widgets ─────────────────────────────────────────────────────────────
+// State Widgets (R-27: all states covered)
 class _FeedLoading extends StatelessWidget {
   const _FeedLoading();
 
@@ -491,5 +495,4 @@ class _FeedError extends StatelessWidget {
           ],
         ),
       );
-    
 }

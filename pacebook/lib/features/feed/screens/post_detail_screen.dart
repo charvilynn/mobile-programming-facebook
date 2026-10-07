@@ -8,7 +8,7 @@ import '../widgets/post_card.dart';
 import '../widgets/comment_tile.dart';
 import '../providers/feed_provider.dart';
 
-// ─── PostDetailScreen ─────────────────────────────────────────────────────────
+// PostDetailScreen
 class PostDetailScreen extends ConsumerStatefulWidget {
   final int postId;
   const PostDetailScreen({super.key, required this.postId});
@@ -31,12 +31,12 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   }
 
   Future<void> _loadData() async {
-    // Find post from feed state first (optimistic)
+ // Find post from feed state first (optimistic)
     final feed = ref.read(feedProvider).valueOrNull ?? [];
     final found = feed.where((p) => p.id == widget.postId);
     if (found.isNotEmpty) setState(() => _post = found.first);
 
-    // Load comments
+ // Load comments (mock for now)
     await Future.delayed(const Duration(milliseconds: 600));
     if (mounted) {
       setState(() {
@@ -128,14 +128,14 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                 : ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      // Post card (full, non-compact)
+ // Post card (full, non-compact)
                       PostCard(
                         post: _post!,
                         isCompact: false,
                         onReact: (_) {},
                         onShareTap: () {},
                       ),
-                      // Comment count header
+ // Comment count header
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
                             AppSpacing.md, AppSpacing.md, AppSpacing.md,
@@ -147,10 +147,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                               fontWeight: FontWeight.w600),
                         ),
                       ),
-                      // Comments list (R-27: loading + empty + data states)
+ // Comments list (R-27: loading + empty + data states)
                       if (_isLoadingComments)
                         Padding(
-                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          padding: EdgeInsets.all(AppSpacing.lg),
                           child: Center(
                             child: CircularProgressIndicator(
                                 color: AppColors.cyan, strokeWidth: 2),
@@ -190,7 +190,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
                     ],
                   ),
           ),
-          // Sticky comment input
+ // Sticky comment input
           CommentInputBar(
             replyingTo: _replyingToName,
             onCancelReply: () => setState(() {

@@ -6,21 +6,19 @@ class StorageService {
   static const _refreshKey = 'refresh_token';
   static const _userIdKey = 'user_id';
 
-  // Web uses IndexedDB-backed storage via flutter_secure_storage
-  // Mobile uses Keychain (iOS) / EncryptedSharedPreferences (Android)
   final FlutterSecureStorage _storage;
 
   StorageService()
-    : _storage = kIsWeb
-          ? const FlutterSecureStorage(
-              webOptions: WebOptions(
-                wrapKey: 'pacebook_wrap_key_2026',
-                wrapKeyIv: 'pacebook_iv_2026!',
-              ),
-            )
-          : const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-            );
+      : _storage = kIsWeb
+            ? const FlutterSecureStorage(
+                webOptions: WebOptions(
+                  wrapKey: 'pacebook_wrap_key_2026',
+                  wrapKeyIv: 'pacebook_iv_2026!',
+                ),
+              )
+            : const FlutterSecureStorage(
+                aOptions: AndroidOptions(encryptedSharedPreferences: true),
+              );
 
   Future<void> saveToken(String token) =>
       _storage.write(key: _tokenKey, value: token);
@@ -68,7 +66,7 @@ class StorageService {
       final token = await getToken();
       return token != null && token.isNotEmpty;
     } catch (_) {
-      // Storage can fail on web without HTTPS context — treat as logged out
+ // Storage can fail on web without HTTPS context — treat as logged out
       return false;
     }
   }
