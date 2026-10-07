@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+\import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
@@ -11,6 +11,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../profile/widgets/profile_widgets.dart';
 import '../widgets/community_widgets.dart';
 
+// GroupsListScreen
 class GroupsListScreen extends ConsumerStatefulWidget {
   const GroupsListScreen({super.key});
   @override
@@ -90,6 +91,7 @@ class _GroupsListScreenState extends ConsumerState<GroupsListScreen> {
   }
 }
 
+// EventsListScreen
 class EventsListScreen extends ConsumerStatefulWidget {
   const EventsListScreen({super.key});
   @override
@@ -200,6 +202,7 @@ class _EventsListScreenState extends ConsumerState<EventsListScreen> {
   }
 }
 
+// MarketplaceHomeScreen
 class MarketplaceHomeScreen extends ConsumerStatefulWidget {
   const MarketplaceHomeScreen({super.key});
   @override
@@ -215,16 +218,16 @@ class _MarketplaceHomeScreenState extends ConsumerState<MarketplaceHomeScreen> {
   final _items = const [
     MarketItem(id: 1, title: 'MacBook Pro 2021 M1', price: 18500000,
         condition: 'used', category: 'Elektronik', sellerName: 'Davvin',
-        imageUrl: 'https://picsum.photos/seed/mac/400/400'),
+ imageUrl: 'https://picsum.photos/seed/mac/400/400'),
     MarketItem(id: 2, title: 'Baju Batik Modern', price: 150000,
         condition: 'new', category: 'Pakaian', sellerName: 'Livi',
-        imageUrl: 'https://picsum.photos/seed/baju/400/400'),
+ imageUrl: 'https://picsum.photos/seed/baju/400/400'),
     MarketItem(id: 3, title: 'Flutter in Action Book', price: 220000,
         condition: 'used', category: 'Buku', sellerName: 'Chandra',
-        imageUrl: 'https://picsum.photos/seed/buku/400/400'),
+ imageUrl: 'https://picsum.photos/seed/buku/400/400'),
     MarketItem(id: 4, title: 'Gaming Chair', price: 2750000,
         condition: 'new', category: 'Furniture', sellerName: 'Olivian',
-        imageUrl: 'https://picsum.photos/seed/chair/400/400'),
+ imageUrl: 'https://picsum.photos/seed/chair/400/400'),
   ];
 
   List<MarketItem> get _filtered => _items.where((item) {
@@ -246,62 +249,42 @@ class _MarketplaceHomeScreenState extends ConsumerState<MarketplaceHomeScreen> {
               size: 18, color: AppColors.textSecondary),
           onPressed: () => context.pop(),
         ),
-        title: Text('Marketplace',
+        title: Text('PaceMarket',
             style: AppTypography.h3.copyWith(color: AppColors.textPrimary)),
         actions: [
+          AnimatedSearchBar(onSearch: (q) => setState(() => _query = q)),
           IconButton(
-            icon: Icon(Icons.add, color: AppColors.cyan),
+            icon: Icon(Icons.add_shopping_cart_outlined,
+                color: AppColors.cyan),
             onPressed: () {},
-            tooltip: 'Jual Barang',
+            tooltip: 'Jual barang',
           ),
         ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-            child: TextField(
-              onChanged: (v) => setState(() => _query = v),
-              style: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                hintText: 'Cari barang di marketplace...',
-                hintStyle:
-                    AppTypography.bodySm.copyWith(color: AppColors.textMuted),
-                prefixIcon: Icon(Icons.search, color: AppColors.textMuted, size: 20),
-                filled: true,
-                fillColor: AppColors.bgSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md, vertical: 10),
-                isDense: true,
-              ),
-            ),
-          ),
+ // Category chips
           SizedBox(
-            height: 38,
+            height: 44,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm),
               itemCount: _categories.length,
               itemBuilder: (_, i) => MarketplaceCategoryChip(
                 label: _categories[i],
                 isSelected: _selectedCategory == _categories[i],
-                onTap: () =>
-                    setState(() => _selectedCategory = _categories[i]),
+                onTap: () => setState(() => _selectedCategory = _categories[i]),
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+ // Items grid
           Expanded(
             child: _filtered.isEmpty
                 ? _EmptyState(
-                    icon: Icons.inventory_2_outlined,
+                    icon: Icons.storefront_outlined,
                     title: 'Tidak ada barang',
-                    subtitle: 'Coba kata kunci atau kategori lain.')
+                    subtitle: 'Coba kategori atau kata kunci lain.')
                 : GridView.builder(
                     padding: const EdgeInsets.all(AppSpacing.md),
                     gridDelegate:
@@ -309,12 +292,12 @@ class _MarketplaceHomeScreenState extends ConsumerState<MarketplaceHomeScreen> {
                       crossAxisCount: 2,
                       crossAxisSpacing: AppSpacing.sm,
                       mainAxisSpacing: AppSpacing.sm,
-                      childAspectRatio: 0.68,
+                      childAspectRatio: 0.72,
                     ),
                     itemCount: _filtered.length,
                     itemBuilder: (_, i) => MarketplaceItemCard(
                       item: _filtered[i],
-                      onTap: () => context.push('/market/${_filtered[i].id}'),
+                      onTap: () {},
                     ),
                   ),
           ),
@@ -324,6 +307,7 @@ class _MarketplaceHomeScreenState extends ConsumerState<MarketplaceHomeScreen> {
   }
 }
 
+// SettingsScreen
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
   @override
@@ -331,25 +315,33 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  String _privacyLabel = 'Semua Orang';
   String _privacyKey = 'public';
+  String _privacyLabel = 'Semua Orang';
 
   @override
   void initState() {
     super.initState();
-    _loadPrivacySetting();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final storage = ref.read(storageServiceProvider);
+      final saved = await storage.getProfileVisibility();
+      if (saved != null && mounted) {
+        setState(() {
+          _privacyKey = saved;
+          _privacyLabel = _mapPrivacyLabel(saved);
+        });
+      }
+    });
   }
 
-  Future<void> _loadPrivacySetting() async {
-    final storage = ref.read(storageServiceProvider);
-    final saved = await storage.getProfileVisibility();
-    if (saved != null && mounted) {
-      setState(() {
-        _privacyKey = saved;
-        _privacyLabel = saved == 'friends'
-            ? 'Hanya Teman'
-            : (saved == 'private' ? 'Hanya Saya' : 'Semua Orang');
-      });
+  String _mapPrivacyLabel(String key) {
+    switch (key) {
+      case 'friends':
+        return 'Hanya Teman';
+      case 'private':
+        return 'Hanya Saya';
+      case 'public':
+      default:
+        return 'Semua Orang';
     }
   }
 
@@ -459,20 +451,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             });
             messenger.showSnackBar(
               SnackBar(
-                content: Text('Privasi profil diubah menjadi: $label'),
+                content: Text('Privasi profil diatur ke: $label'),
                 backgroundColor: AppColors.bgCard,
                 behavior: SnackBarBehavior.floating,
               ),
             );
-          } catch (e) {
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('Gagal menyimpan pengaturan privasi: $e'),
-                backgroundColor: AppColors.error,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
+          } catch (_) {}
         },
       ),
     );
@@ -484,35 +468,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.bgSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.cyan, AppColors.electricBlue],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.bolt, color: AppColors.bgDeep, size: 22),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Text('PaceBook',
-                style: AppTypography.h3.copyWith(color: AppColors.textPrimary)),
-          ],
-        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Aplikasi media sosial modern dengan arsitektur Flutter Riverpod dan Node.js Express.',
-                style: AppTypography.bodySm.copyWith(color: AppColors.textSecondary)),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF0284C7), Color(0xFF22D3EE)],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Center(
+                child: Text('P',
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white)),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text('PaceBook',
+                style: AppTypography.h2.copyWith(color: AppColors.textPrimary)),
+            const SizedBox(height: 2),
+            Text('Versi 1.0.0 • Production Build 2026.1',
+                style: AppTypography.labelSm.copyWith(color: AppColors.cyan)),
             const SizedBox(height: AppSpacing.md),
             Text(
-              'Pengembang Tim PaceBook:\n• Aaron (Autentikasi)\n• Davvin (Feed & Media)\n• Livi (Profil & Privasi)\n• Chandra (Chat & Notifikasi)\n• Olivian (Komunitas & Marketplace)',
+              'Aplikasi media sosial modern dengan fokus pada konektivitas komunitas tanpa batas. Mendukung interaksi realtime, story ephemeral, catatan status, dan kontrol privasi terpercaya.',
               style: AppTypography.bodySm.copyWith(color: AppColors.textSecondary),
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.lg),
             Divider(color: AppColors.borderSubtle, height: 1),
@@ -532,7 +518,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 Text('Backend API',
                     style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
-                Text('Node.js & MySQL XAMPP',
+                Text('Node.js & SQLite Express',
                     style: AppTypography.labelSm.copyWith(color: AppColors.textPrimary)),
               ],
             ),
@@ -616,21 +602,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 }
 
-class _ChangePasswordSheet extends StatefulWidget {
+// Change Password BottomSheet
+class _ChangePasswordSheet extends ConsumerStatefulWidget {
   const _ChangePasswordSheet();
+
   @override
-  State<_ChangePasswordSheet> createState() => _ChangePasswordSheetState();
+  ConsumerState<_ChangePasswordSheet> createState() => _ChangePasswordSheetState();
 }
 
-class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
+class _ChangePasswordSheetState extends ConsumerState<_ChangePasswordSheet> {
   final _oldPassCtrl = TextEditingController();
   final _newPassCtrl = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
+
   bool _obscureOld = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
   bool _isLoading = false;
-  String? _error;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -641,44 +630,61 @@ class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
   }
 
   Future<void> _submit() async {
-    final oldP = _oldPassCtrl.text.trim();
-    final newP = _newPassCtrl.text.trim();
-    final confirmP = _confirmPassCtrl.text.trim();
+    final oldPass = _oldPassCtrl.text.trim();
+    final newPass = _newPassCtrl.text.trim();
+    final confirmPass = _confirmPassCtrl.text.trim();
 
-    if (oldP.isEmpty || newP.isEmpty || confirmP.isEmpty) {
-      setState(() => _error = 'Semua kolom wajib diisi');
+    if (oldPass.isEmpty) {
+      setState(() => _errorMessage = 'Password saat ini wajib diisi.');
       return;
     }
-    if (newP.length < 6) {
-      setState(() => _error = 'Password baru minimal 6 karakter');
+    if (newPass.length < 6) {
+      setState(() => _errorMessage = 'Password baru minimal 6 karakter.');
       return;
     }
-    if (newP != confirmP) {
-      setState(() => _error = 'Konfirmasi password tidak cocok');
+    if (newPass != confirmPass) {
+      setState(() => _errorMessage = 'Konfirmasi password tidak cocok.');
       return;
     }
 
     setState(() {
       _isLoading = true;
-      _error = null;
+      _errorMessage = null;
     });
 
     try {
-      await Future.delayed(const Duration(milliseconds: 700));
-      if (!mounted) return;
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password berhasil diperbarui!'),
-          backgroundColor: AppColors.bgCard,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      final api = ref.read(apiClientProvider);
+      await api.post('/auth/change-password', data: {
+        'current_password': oldPass,
+        'new_password': newPass,
+      });
+
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: const [
+                Icon(Icons.check_circle, color: AppColors.success, size: 20),
+                SizedBox(width: 8),
+                Text('Password berhasil diperbarui!'),
+              ],
+            ),
+            backgroundColor: AppColors.bgCard,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     } catch (e) {
+      String err = 'Gagal mengubah password. Pastikan password lama benar.';
+      if (e is DioException && e.response?.data is Map) {
+        final msg = e.response?.data['message'];
+        if (msg != null) err = msg.toString();
+      }
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _error = 'Gagal mengganti password: $e';
+          _errorMessage = err;
         });
       }
     }
@@ -686,144 +692,151 @@ class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.fromLTRB(
-          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg + bottomInset),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.borderSubtle,
-                borderRadius: BorderRadius.circular(2),
+        AppSpacing.lg,
+        AppSpacing.sm,
+        AppSpacing.lg,
+        MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: AppColors.borderSubtle,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text('Ganti Password',
-              style: AppTypography.h3.copyWith(color: AppColors.textPrimary)),
-          const SizedBox(height: 4),
-          Text('Masukkan password lama dan tentukan password baru yang aman.',
-              style: AppTypography.bodySm.copyWith(color: AppColors.textMuted)),
-          if (_error != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.error.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+            Text('Ganti Password',
+                style: AppTypography.h3.copyWith(color: AppColors.textPrimary)),
+            const SizedBox(height: 4),
+            Text('Pastikan password baru kamu kuat dan mudah kamu ingat.',
+                style: AppTypography.bodySm.copyWith(color: AppColors.textSecondary)),
+            const SizedBox(height: AppSpacing.lg),
+
+            if (_errorMessage != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                padding: const EdgeInsets.all(AppSpacing.sm + 2),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline, color: AppColors.error, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(_errorMessage!,
+                          style: AppTypography.labelSm.copyWith(color: AppColors.error)),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.error_outline, size: 16, color: AppColors.error),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(_error!,
-                        style: AppTypography.labelSm.copyWith(color: AppColors.error)),
+
+            _buildPasswordField(
+              label: 'Password Saat Ini',
+              controller: _oldPassCtrl,
+              obscure: _obscureOld,
+              onToggle: () => setState(() => _obscureOld = !_obscureOld),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _buildPasswordField(
+              label: 'Password Baru',
+              controller: _newPassCtrl,
+              obscure: _obscureNew,
+              onToggle: () => setState(() => _obscureNew = !_obscureNew),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _buildPasswordField(
+              label: 'Konfirmasi Password Baru',
+              controller: _confirmPassCtrl,
+              obscure: _obscureConfirm,
+              onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _isLoading ? null : () => Navigator.pop(context),
+                    child: const Text('Batal'),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.cyan,
+                      foregroundColor: AppColors.bgDeep,
+                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: AppColors.bgDeep),
+                          )
+                        : const Text('Simpan Password'),
+                  ),
+                ),
+              ],
             ),
           ],
-          const SizedBox(height: AppSpacing.md),
-          _PasswordField(
-            controller: _oldPassCtrl,
-            label: 'Password Saat Ini',
-            hint: '••••••••',
-            obscure: _obscureOld,
-            onToggle: () => setState(() => _obscureOld = !_obscureOld),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _PasswordField(
-            controller: _newPassCtrl,
-            label: 'Password Baru',
-            hint: 'Minimal 6 karakter',
-            obscure: _obscureNew,
-            onToggle: () => setState(() => _obscureNew = !_obscureNew),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _PasswordField(
-            controller: _confirmPassCtrl,
-            label: 'Ulangi Password Baru',
-            hint: 'Ketik ulang password baru',
-            obscure: _obscureConfirm,
-            onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isLoading ? null : _submit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.cyan,
-                disabledBackgroundColor: AppColors.bgCard,
-                foregroundColor: AppColors.bgDeep,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.bgDeep),
-                    )
-                  : const Text('Simpan Password Baru',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
 
-class _PasswordField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String hint;
-  final bool obscure;
-  final VoidCallback onToggle;
-
-  const _PasswordField({
-    required this.controller,
-    required this.label,
-    required this.hint,
-    required this.obscure,
-    required this.onToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPasswordField({
+    required String label,
+    required TextEditingController controller,
+    required bool obscure,
+    required VoidCallback onToggle,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
             style: AppTypography.labelSm.copyWith(
-                color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 4),
+                color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 6),
         TextField(
           controller: controller,
           obscureText: obscure,
           style: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: AppTypography.bodySm.copyWith(color: AppColors.textMuted),
             filled: true,
-            fillColor: AppColors.bgCard,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            fillColor: AppColors.bgDeep,
+            hintText: '••••••••',
+            hintStyle: TextStyle(color: AppColors.textMuted),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(color: AppColors.borderSubtle),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: AppColors.borderSubtle),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: AppColors.cyan, width: 1.5),
             ),
             suffixIcon: IconButton(
               icon: Icon(
@@ -840,9 +853,10 @@ class _PasswordField extends StatelessWidget {
   }
 }
 
+// Privacy Selector BottomSheet
 class _PrivacySelectorSheet extends StatelessWidget {
   final String currentKey;
-  final void Function(String key, String label) onSelected;
+  final Function(String key, String label) onSelected;
 
   const _PrivacySelectorSheet({
     required this.currentKey,
@@ -852,11 +866,12 @@ class _PrivacySelectorSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -865,21 +880,21 @@ class _PrivacySelectorSheet extends StatelessWidget {
             child: Container(
               width: 36,
               height: 4,
+              margin: const EdgeInsets.only(bottom: AppSpacing.md),
               decoration: BoxDecoration(
                 color: AppColors.borderSubtle,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          Text('Visibilitas Profil',
+          Text('Siapa yang Bisa Melihat Profil',
               style: AppTypography.h3.copyWith(color: AppColors.textPrimary)),
           const SizedBox(height: 4),
-          Text('Pilih siapa saja yang berhak melihat foto profil, bio, dan cerita Anda.',
-              style: AppTypography.bodySm.copyWith(color: AppColors.textMuted)),
+          Text('Tentukan siapa yang dapat melihat detail profil lengkap kamu.',
+              style: AppTypography.bodySm.copyWith(color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.md),
           _PrivacyOptionTile(
-            icon: Icons.public,
+            icon: Icons.public_rounded,
             iconColor: AppColors.cyan,
             title: 'Semua Orang',
             subtitle: 'Siapa saja di dalam maupun luar PaceBook dapat melihat profil Anda.',
@@ -1008,6 +1023,7 @@ class _SettingsSection extends StatelessWidget {
   }
 }
 
+// SearchScreen (Jelajah & Saran Teman)
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
   @override
@@ -1017,6 +1033,7 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _ctrl = TextEditingController();
   String _query = '';
+ // Track in-flight optimistic updates (userId -> new status)
   final Map<int, String> _optimisticStatus = {};
 
   @override
@@ -1083,6 +1100,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   Widget _buildStatusWidget(int uid, String name, String backendStatus) {
+ // Optimistic override takes priority
     final status = _optimisticStatus[uid] ?? backendStatus;
 
     if (status == 'accepted' || status == 'connected') {
@@ -1144,6 +1162,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       );
     }
 
+ // status == 'none' or other
     return ElevatedButton.icon(
       onPressed: () => _connect(uid, name),
       icon: const Icon(Icons.person_add_rounded, size: 15),
@@ -1228,6 +1247,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 children: [
+ // Section Header: Saran Teman
                   Row(
                     children: [
                       Container(
@@ -1271,8 +1291,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   ),
                   const SizedBox(height: AppSpacing.md),
 
+ // Suggestions List from Real Database
                   suggestionsAsync.when(
-                    loading: () => const Padding(
+                    loading: () => Padding(
                       padding: EdgeInsets.symmetric(vertical: 40),
                       child: Center(
                         child: CircularProgressIndicator(
@@ -1324,7 +1345,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                   color: AppColors.cyan.withValues(alpha: 0.12),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.people_outline_rounded,
+                                child: Icon(Icons.people_outline_rounded,
                                     size: 36, color: AppColors.cyan),
                               ),
                               const SizedBox(height: 14),
@@ -1392,7 +1413,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                         name.isNotEmpty
                                             ? name[0].toUpperCase()
                                             : '?',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppColors.cyan,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
@@ -1442,6 +1463,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 }
+
+// Shared Empty State
 class _EmptyState extends StatelessWidget {
   final IconData icon;
   final String title;

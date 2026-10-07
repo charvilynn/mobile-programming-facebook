@@ -36,6 +36,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
 
   void _onContentChanged(String v) {
     final trimmed = v.trim();
+ // Guard: if user pasted raw base64 or data URI into the text field,
+ // convert it into a photo attachment automatically!
     if (trimmed.length > 80 &&
         !trimmed.contains(' ') &&
         (trimmed.startsWith('data:image') ||
@@ -53,7 +55,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Gambar dari teks berhasil dilampirkan ke foto postingan.'),
             backgroundColor: AppColors.bgSurface,
             duration: Duration(seconds: 2),
@@ -202,7 +204,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
           controller: urlCtrl,
           style: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
-            hintText: 'https://example.com/gambar.jpg',
+ hintText: 'https://example.com/gambar.jpg',
             hintStyle: AppTypography.bodySm.copyWith(color: AppColors.textMuted),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -288,6 +290,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
         final createdPost = PostData.fromJson(postJson);
         ref.read(feedProvider.notifier).addPost(createdPost);
       } else {
+ // Fallback local add
         final profile = ref.read(profileProvider(null)).valueOrNull;
         final newPost = PostData(
           id: DateTime.now().millisecondsSinceEpoch,
@@ -398,6 +401,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       ),
       body: Column(
         children: [
+ // Author + Privacy
           Padding(
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Row(
@@ -474,6 +478,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
             ),
           ),
 
+ // Content Input
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -496,6 +501,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
             ),
           ),
 
+ // Tagged Friends Chips
           if (_taggedFriends.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -540,6 +546,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               ),
             ),
 
+ // Feeling indicator
           if (_feeling != null)
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -577,6 +584,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               ),
             ),
 
+ // Media previews
           if (_mediaUrls.isNotEmpty)
             SizedBox(
               height: 84,
@@ -611,6 +619,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               ),
             ),
 
+ // Toolbar
           CreatePostToolbar(
             onAddPhoto: _showAddPhotoModal,
             onAddFeeling: _showFeelingPicker,
@@ -622,6 +631,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   }
 }
 
+// _TagFriendsSheet
 class _TagFriendsSheet extends ConsumerStatefulWidget {
   final List<Map<String, dynamic>> initiallyTagged;
   final ValueChanged<List<Map<String, dynamic>>> onDone;
@@ -679,6 +689,7 @@ class _TagFriendsSheetState extends ConsumerState<_TagFriendsSheet> {
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           children: [
+ // Handle bar
             Center(
               child: Container(
                 width: 36, height: 4,
@@ -712,6 +723,7 @@ class _TagFriendsSheetState extends ConsumerState<_TagFriendsSheet> {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
+ // Search Input
             TextField(
               controller: _searchCtrl,
               onChanged: (v) => _searchUsers(v.trim()),
@@ -738,6 +750,7 @@ class _TagFriendsSheetState extends ConsumerState<_TagFriendsSheet> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
+ // List of Users
             Expanded(
               child: _isLoading
                   ? Center(
