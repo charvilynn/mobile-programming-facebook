@@ -819,7 +819,7 @@ class _DetailRow extends StatelessWidget {
 // FriendsGridCard
 /// Section matching Facebook's "Friends" grid:
 /// - "Friends" header + count + "See all" action
-/// - Real friends grid or empty state with button to Jelajah
+/// - Real friends grid (3x2) or empty state with button to Jelajah
 class FriendsGridCard extends StatelessWidget {
   final int totalFriends;
   final List<UserProfile> friends;
@@ -849,7 +849,7 @@ class FriendsGridCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
- // Header: Friends (count) + See all
+          // Header: Friends (count) + See all
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -885,7 +885,7 @@ class FriendsGridCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
 
- // Real friends or Empty State
+          // Real friends or Empty State
           if (friends.isEmpty || totalFriends == 0)
             Container(
               width: double.infinity,
@@ -950,7 +950,7 @@ class FriendsGridCard extends StatelessWidget {
               ),
             )
           else
- // 3x2 Grid
+            // 3x2 Grid
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -979,17 +979,15 @@ class FriendsGridCard extends StatelessWidget {
                                     image: avatar, fit: BoxFit.cover)
                                 : null,
                           ),
+                          alignment: Alignment.center,
                           child: avatar == null
-                              ? Center(
-                                  child: Text(
-                                    f.name.isNotEmpty
-                                        ? f.name[0].toUpperCase()
-                                        : '?',
-                                    style: TextStyle(
-                                      color: AppColors.cyan,
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w800,
-                                    ),
+                              ? Text(
+                                  f.name.isNotEmpty
+                                      ? f.name[0].toUpperCase()
+                                      : '?',
+                                  style: AppTypography.h3.copyWith(
+                                    color: AppColors.cyan,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 )
                               : null,
@@ -1001,16 +999,7 @@ class FriendsGridCard extends StatelessWidget {
                         style: AppTypography.labelMd.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '@${f.username}',
-                        style: AppTypography.labelSm.copyWith(
-                          color: AppColors.textMuted,
-                          fontSize: 11,
+                          fontSize: 12,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1696,7 +1685,7 @@ class MutualFriendsRow extends StatelessWidget {
     final showing = avatarUrls.take(maxShow).toList();
     return Row(
       children: [
- // Stacked avatars
+        // Stacked avatars
         SizedBox(
           width: showing.length * 20.0 + 12,
           height: 28,
@@ -1730,12 +1719,14 @@ class MutualFriendsRow extends StatelessWidget {
             }),
           ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(width: AppSpacing.xs),
         Expanded(
           child: Text(
             '$totalMutual koneksi bersama',
-            style:
-                AppTypography.labelSm.copyWith(color: AppColors.textSecondary),
+            style: AppTypography.labelSm.copyWith(
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),
