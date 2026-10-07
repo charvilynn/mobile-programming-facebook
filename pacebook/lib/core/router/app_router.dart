@@ -26,7 +26,6 @@ import '../../features/community_event_market/screens/marketplace_item_detail_sc
 import '../shell/main_shell.dart';
 import '../providers/core_providers.dart';
 
-
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/splash',
@@ -48,7 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
- // AUTH ROUTES (no shell)
+      // AUTH ROUTES (no shell)
       GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
@@ -62,13 +61,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/complete-profile', builder: (_, __) => const CompleteProfileScreen()),
 
- // MAIN APP (with bottom nav shell)
+      // MAIN APP (with bottom nav shell)
       ShellRoute(
         builder: (_, state, child) => MainShell(child: child),
         routes: [
- // Feed
+          // Feed
           GoRoute(path: '/feed', builder: (_, __) => const FeedScreen()),
           GoRoute(path: '/create-post', builder: (_, __) => const CreatePostScreen()),
+          GoRoute(path: '/feed/create', builder: (_, __) => const CreatePostScreen()),
           GoRoute(
             path: '/post/:id',
             builder: (_, state) => PostDetailScreen(
@@ -81,7 +81,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               postId: int.parse(state.pathParameters['id']!),
             ),
           ),
- // Profile
+          // Profile
           GoRoute(
             path: '/profile/:id',
             builder: (_, state) => ProfileScreen(
@@ -104,9 +104,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/connection-requests',
             builder: (_, __) => const ConnectionRequestsScreen(),
           ),
- // Chat
+          // Chat
           GoRoute(path: '/chat', builder: (_, __) => const ChatListScreen()),
- // opens a direct message with a specific user
           GoRoute(
             path: '/chat/dm/:userId',
             builder: (_, state) {
@@ -128,7 +127,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(path: '/notifications', builder: (_, __) => const NotificationCenterScreen()),
- // Communities
+          // Communities
           GoRoute(path: '/groups', builder: (_, __) => const GroupsListScreen()),
           GoRoute(
             path: '/groups/:id',
@@ -136,7 +135,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               groupId: int.tryParse(state.pathParameters['id']!) ?? 1,
             ),
           ),
- // Events
+          // Events
           GoRoute(path: '/events', builder: (_, __) => const EventsListScreen()),
           GoRoute(
             path: '/events/:id',
@@ -144,7 +143,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               eventId: int.tryParse(state.pathParameters['id']!) ?? 1,
             ),
           ),
- // Marketplace
+          // Marketplace
           GoRoute(path: '/marketplace', builder: (_, __) => const MarketplaceHomeScreen()),
           GoRoute(
             path: '/marketplace/:id',
@@ -152,12 +151,12 @@ final routerProvider = Provider<GoRouter>((ref) {
               itemId: int.tryParse(state.pathParameters['id']!) ?? 1,
             ),
           ),
- // Search & Settings
+          // Search & Settings
           GoRoute(path: '/search', builder: (_, __) => const SearchScreen()),
           GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
- // Bookmarks
+          // Bookmarks
           GoRoute(path: '/bookmarks', builder: (_, __) => const BookmarksScreen()),
- // Notes
+          // Notes
           GoRoute(path: '/notes', builder: (_, __) => const NotesScreen()),
           GoRoute(path: '/notes/create', builder: (_, __) => const CreateNoteScreen()),
         ],

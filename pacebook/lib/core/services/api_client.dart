@@ -3,9 +3,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'storage_service.dart';
 
 class ApiClient {
+  // Ganti dengan IPv4 laptop Anda yang didapat dari ipconfig:
+  static const String ipLaptop = '192.168.18.7';
+
   static String get baseUrl {
     if (kIsWeb) return 'http://localhost:3000/api/v1';
-    return 'http://10.0.2.2:3000/api/v1';
+    return 'http://$ipLaptop:3000/api/v1';
   }
 
   late final Dio _dio;
@@ -19,7 +22,6 @@ class ApiClient {
       headers: {'Content-Type': 'application/json'},
     ));
 
-    // Inject JWT token on every request
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await _storage.getToken();
