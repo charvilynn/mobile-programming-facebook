@@ -1,12 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/constants/app_spacing.dart';
-
-import '../models/user_profile.dart';
 
 // Smart Image Helpers
 ImageProvider? getSmartImageProvider(String? url) {
@@ -25,11 +21,7 @@ ImageProvider? getSmartImageProvider(String? url) {
   return NetworkImage(trimmed);
 }
 
-Widget buildSmartImage(
-  String? url, {
-  BoxFit fit = BoxFit.cover,
-  Widget? errorWidget,
-}) {
+Widget buildSmartImage(String? url, {BoxFit fit = BoxFit.cover, Widget? errorWidget}) {
   if (url == null || url.trim().isEmpty) {
     return errorWidget ?? const SizedBox.shrink();
   }
@@ -71,7 +63,7 @@ class UserProfile {
   final String? thoughtNote;
   final int postCount;
   final int connectionCount;
-  final String connectionStatus; // 'none' | 'pending_sent' | 'pending_received' | 'connected'
+ final String connectionStatus; // 'none' | 'pending_sent' | 'pending_received' | 'connected'
   final bool isPrivate;
 
   const UserProfile({
@@ -95,6 +87,11 @@ class UserProfile {
 }
 
 // Facebook-Style ProfileHeader
+/// Header matching Facebook mobile layout (media_1790615561494.png):
+/// - Full-width cover photo with bottom-right camera button
+/// - Centered avatar overlapping cover with cute thought bubble ("heyo") + camera badge
+/// - Centered Name, username, stats (friends & posts), friends in common row
+/// - Action buttons: [+ Tambah ke cerita], [✏ Edit profil], [...]
 class ProfileHeader extends StatelessWidget {
   final UserProfile profile;
   final bool isMyProfile;
@@ -120,18 +117,17 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isRestricted = profile.isPrivate && !isMyProfile;
-    final avatarProvider = isRestricted
-        ? null
-        : getSmartImageProvider(profile.avatarUrl);
+    final avatarProvider =
+        isRestricted ? null : getSmartImageProvider(profile.avatarUrl);
 
     return Column(
       children: [
-        // Cover Photo + Centered Avatar with Thought Bubble
+ // Cover Photo + Centered Avatar with Thought Bubble
         Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.topCenter,
           children: [
-            // 1. Cover Photo
+ // 1. Cover Photo
             GestureDetector(
               onTap: isMyProfile ? onChangeCover : null,
               child: Container(
@@ -148,8 +144,7 @@ class ProfileHeader extends StatelessWidget {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                child:
-                    (!isRestricted &&
+                child: (!isRestricted &&
                         profile.coverUrl != null &&
                         profile.coverUrl!.isNotEmpty)
                     ? buildSmartImage(
@@ -161,7 +156,7 @@ class ProfileHeader extends StatelessWidget {
               ),
             ),
 
-            // 2. Camera Button on Cover (Bottom-Right)
+ // 2. Camera Button on Cover (Bottom-Right)
             if (isMyProfile)
               Positioned(
                 top: 146,
@@ -182,19 +177,15 @@ class ProfileHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      Icons.camera_alt,
-                      size: 18,
-                      color: AppColors.textPrimary,
-                    ),
+                    child: Icon(Icons.camera_alt,
+                        size: 18, color: AppColors.textPrimary),
                   ),
                 ),
               ),
 
-            // 3. Avatar + Thought Bubble (Centered, Overlapping Cover)
+ // 3. Avatar + Thought Bubble (Centered, Overlapping Cover)
             Positioned(
-              top:
-                  (!isRestricted &&
+              top: (!isRestricted &&
                       profile.thoughtNote != null &&
                       profile.thoughtNote!.trim().isNotEmpty)
                   ? 100
@@ -202,12 +193,14 @@ class ProfileHeader extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+ // Thought Bubble: ONLY show if not restricted & user created note!
                   if (!isRestricted &&
                       profile.thoughtNote != null &&
                       profile.thoughtNote!.trim().isNotEmpty) ...[
                     _ThoughtBubble(text: profile.thoughtNote!),
                     const SizedBox(height: 2),
                   ],
+ // Avatar with Border & Camera Badge
                   GestureDetector(
                     onTap: isMyProfile ? onChangeAvatar : null,
                     child: Stack(
@@ -229,48 +222,45 @@ class ProfileHeader extends StatelessWidget {
                           ),
                           child: CircleAvatar(
                             radius: 52,
-                            backgroundColor: AppColors.cyan.withValues(
-                              alpha: 0.2,
-                            ),
+                            backgroundColor:
+                                AppColors.cyan.withValues(alpha: 0.2),
                             backgroundImage: avatarProvider,
                             child: avatarProvider == null
                                 ? (isRestricted
-                                      ? Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.lock_rounded,
+                                    ? Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.lock_rounded,
                                               size: 30,
+                                              color: AppColors.textMuted),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            profile.name.isNotEmpty
+                                                ? profile.name[0].toUpperCase()
+                                                : '?',
+                                            style:
+                                                AppTypography.labelMd.copyWith(
                                               color: AppColors.textMuted,
+                                              fontWeight: FontWeight.w700,
                                             ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              profile.name.isNotEmpty
-                                                  ? profile.name[0]
-                                                        .toUpperCase()
-                                                  : '?',
-                                              style: AppTypography.labelMd
-                                                  .copyWith(
-                                                    color: AppColors.textMuted,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                            ),
-                                          ],
-                                        )
-                                      : Text(
-                                          profile.name.isNotEmpty
-                                              ? profile.name[0].toUpperCase()
-                                              : '?',
-                                          style: AppTypography.h1.copyWith(
-                                            color: AppColors.cyan,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 34,
                                           ),
-                                        ))
+                                        ],
+                                      )
+                                    : Text(
+                                        profile.name.isNotEmpty
+                                            ? profile.name[0].toUpperCase()
+                                            : '?',
+                                        style: AppTypography.h1.copyWith(
+                                          color: AppColors.cyan,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 34,
+                                        ),
+                                      ))
                                 : null,
                           ),
                         ),
+ // Camera Badge on Avatar
                         if (isMyProfile)
                           Positioned(
                             bottom: 2,
@@ -283,23 +273,16 @@ class ProfileHeader extends StatelessWidget {
                                   color: AppColors.bgSurface,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: AppColors.bgDeep,
-                                    width: 2.5,
-                                  ),
+                                      color: AppColors.bgDeep, width: 2.5),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.3,
-                                      ),
+                                      color: Colors.black.withValues(alpha: 0.3),
                                       blurRadius: 4,
                                     ),
                                   ],
                                 ),
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  size: 15,
-                                  color: AppColors.textPrimary,
-                                ),
+                                child: Icon(Icons.camera_alt,
+                                    size: 15, color: AppColors.textPrimary),
                               ),
                             ),
                           ),
@@ -312,13 +295,15 @@ class ProfileHeader extends StatelessWidget {
           ],
         ),
 
+ // Space below Stack to accommodate overlapping Avatar
         const SizedBox(height: 80),
 
-        // Centered Name, Username, Stats, Common Friends
+ // Centered Name, Username, Stats, Common Friends
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Column(
             children: [
+ // Full Name with drop-down arrow indicator
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -338,22 +323,19 @@ class ProfileHeader extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: AppColors.textSecondary,
-                    size: 22,
-                  ),
+                  Icon(Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.textSecondary, size: 22),
                 ],
               ),
               const SizedBox(height: 2),
+ // Username
               Text(
                 '@${profile.username}',
-                style: AppTypography.bodySm.copyWith(
-                  color: AppColors.textMuted,
-                ),
+                style: AppTypography.bodySm.copyWith(color: AppColors.textMuted),
               ),
               const SizedBox(height: 8),
 
+ // Stats: X teman · Y postingan
               Text(
                 '${profile.connectionCount} teman  ·  ${profile.postCount} postingan',
                 style: AppTypography.bodyMd.copyWith(
@@ -363,6 +345,7 @@ class ProfileHeader extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
+ // Friends with things in common (Social proof row) - only show if there are actual friends!
               if (profile.connectionCount > 0) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -377,51 +360,37 @@ class ProfileHeader extends StatelessWidget {
                             left: 0,
                             child: CircleAvatar(
                               radius: 10,
-                              backgroundColor: AppColors.cyan.withValues(
-                                alpha: 0.3,
-                              ),
-                              child: Text(
-                                'T',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.cyan,
-                                ),
-                              ),
+                              backgroundColor: AppColors.cyan.withValues(alpha: 0.3),
+                              child: Text('T',
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.cyan)),
                             ),
                           ),
                           Positioned(
                             left: 14,
                             child: CircleAvatar(
                               radius: 10,
-                              backgroundColor: AppColors.magenta.withValues(
-                                alpha: 0.3,
-                              ),
-                              child: const Text(
-                                'C',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.magenta,
-                                ),
-                              ),
+                              backgroundColor:
+                                  AppColors.magenta.withValues(alpha: 0.3),
+                              child: const Text('C',
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.magenta)),
                             ),
                           ),
                           Positioned(
                             left: 28,
                             child: CircleAvatar(
                               radius: 10,
-                              backgroundColor: Colors.amber.withValues(
-                                alpha: 0.3,
-                              ),
-                              child: const Text(
-                                'M',
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.amber,
-                                ),
-                              ),
+                              backgroundColor: Colors.amber.withValues(alpha: 0.3),
+                              child: const Text('M',
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.amber)),
                             ),
                           ),
                         ],
@@ -430,23 +399,20 @@ class ProfileHeader extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       'Teman yang terhubung bersama',
-                      style: AppTypography.labelSm.copyWith(
-                        color: AppColors.textMuted,
-                        fontSize: 12,
-                      ),
+                      style: AppTypography.labelSm
+                          .copyWith(color: AppColors.textMuted, fontSize: 12),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
               ],
 
+ // Bio (if set)
               if (profile.bio != null && profile.bio!.isNotEmpty) ...[
                 const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: 8,
-                  ),
+                      horizontal: AppSpacing.md, vertical: 8),
                   decoration: BoxDecoration(
                     color: AppColors.bgSurface.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(10),
@@ -464,6 +430,8 @@ class ProfileHeader extends StatelessWidget {
 
               const SizedBox(height: 16),
 
+ // Action Buttons Row
+ // [+ Tambah ke cerita] | [✏ Edit profil]
               if (isMyProfile)
                 Row(
                   children: [
@@ -519,40 +487,34 @@ class ProfileHeader extends StatelessWidget {
                           profile.connectionStatus == 'connected'
                               ? Icons.check
                               : (profile.connectionStatus == 'pending_received'
-                                    ? Icons.check_rounded
-                                    : (profile.connectionStatus ==
-                                                  'pending_sent' ||
-                                              profile.connectionStatus ==
-                                                  'pending'
-                                          ? Icons.schedule_rounded
-                                          : Icons.person_add_rounded)),
+                                  ? Icons.check_rounded
+                                  : (profile.connectionStatus == 'pending_sent' || profile.connectionStatus == 'pending'
+                                      ? Icons.schedule_rounded
+                                      : Icons.person_add_rounded)),
                           size: 18,
                         ),
                         label: Text(
                           profile.connectionStatus == 'connected'
                               ? 'Terhubung'
                               : (profile.connectionStatus == 'pending_received'
-                                    ? 'Konfirmasi'
-                                    : (profile.connectionStatus ==
-                                                  'pending_sent' ||
-                                              profile.connectionStatus ==
-                                                  'pending'
-                                          ? 'Menunggu'
-                                          : 'Hubungkan')),
+                                  ? 'Konfirmasi'
+                                  : (profile.connectionStatus == 'pending_sent' || profile.connectionStatus == 'pending'
+                                      ? 'Menunggu'
+                                      : 'Hubungkan')),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               profile.connectionStatus == 'connected' ||
-                                  profile.connectionStatus == 'pending_sent' ||
-                                  profile.connectionStatus == 'pending'
-                              ? AppColors.bgSurface
-                              : AppColors.cyan,
+                              profile.connectionStatus == 'pending_sent' ||
+                              profile.connectionStatus == 'pending'
+                                  ? AppColors.bgSurface
+                                  : AppColors.cyan,
                           foregroundColor:
                               profile.connectionStatus == 'connected' ||
-                                  profile.connectionStatus == 'pending_sent' ||
-                                  profile.connectionStatus == 'pending'
-                              ? AppColors.textSecondary
-                              : AppColors.bgDeep,
+                              profile.connectionStatus == 'pending_sent' ||
+                              profile.connectionStatus == 'pending'
+                                  ? AppColors.textSecondary
+                                  : AppColors.bgDeep,
                           padding: const EdgeInsets.symmetric(vertical: 11),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -568,10 +530,8 @@ class ProfileHeader extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: onMessage,
-                        icon: const Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 16,
-                        ),
+                        icon: const Icon(Icons.chat_bubble_outline_rounded,
+                            size: 16),
                         label: const Text('Pesan'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.bgSurface,
@@ -616,7 +576,7 @@ class _ThoughtBubble extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Bubble pill
+ // Bubble pill
         Container(
           constraints: const BoxConstraints(maxWidth: 240),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -674,7 +634,7 @@ class _ThoughtBubble extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 2),
-        // Two small thought dots pointing downwards
+ // Two small thought dots pointing downwards
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -708,6 +668,12 @@ class _ThoughtBubble extends StatelessWidget {
 }
 
 // PersonalDetailsCard
+/// Section matching Facebook's "Personal details":
+/// - Birthday
+/// - Gender / bio
+/// - Work
+/// - Education
+/// - Location
 class PersonalDetailsCard extends StatelessWidget {
   final UserProfile profile;
   final VoidCallback? onEdit;
@@ -838,7 +804,7 @@ class _DetailRow extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, size: 20, color: AppColors.textMuted),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Text(
             text,
@@ -1010,9 +976,7 @@ class FriendsGridCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                             image: avatar != null
                                 ? DecorationImage(
-                                    image: avatar,
-                                    fit: BoxFit.cover,
-                                  )
+                                    image: avatar, fit: BoxFit.cover)
                                 : null,
                           ),
                           alignment: Alignment.center,
@@ -1052,6 +1016,7 @@ class FriendsGridCard extends StatelessWidget {
 }
 
 // ProfileFilterPills
+/// Facebook-style horizontal filter pills: All, Photos, Notes, Friends
 class ProfileFilterPills extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelect;
@@ -1084,16 +1049,16 @@ class ProfileFilterPills extends StatelessWidget {
                 color: isSelected ? AppColors.cyan : AppColors.bgSurface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? AppColors.cyan : AppColors.borderSubtle,
+                  color: isSelected
+                      ? AppColors.cyan
+                      : AppColors.borderSubtle,
                 ),
               ),
               child: Center(
                 child: Text(
                   _labels[i],
                   style: TextStyle(
-                    color: isSelected
-                        ? AppColors.bgDeep
-                        : AppColors.textSecondary,
+                    color: isSelected ? AppColors.bgDeep : AppColors.textSecondary,
                     fontSize: 13,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   ),
@@ -1107,29 +1072,32 @@ class ProfileFilterPills extends StatelessWidget {
   }
 }
 
+
 class _CoverPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.bgMuted, AppColors.cyan.withValues(alpha: 0.08)],
+          colors: [
+            AppColors.bgMuted,
+            AppColors.cyan.withValues(alpha: 0.08),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
       child: Center(
-        child: Icon(
-          Icons.landscape_outlined,
-          color: AppColors.textMuted.withValues(alpha: 0.4),
-          size: 48,
-        ),
+        child: Icon(Icons.landscape_outlined,
+            color: AppColors.textMuted.withValues(alpha: 0.4), size: 48),
       ),
     );
   }
 }
 
 // ProfileStatsBar
+/// Post / Koneksi stats below profile header.
+/// Purpose: quick quantitative overview of user activity.
 class ProfileStatsBar extends StatelessWidget {
   final int postCount;
   final int connectionCount;
@@ -1147,9 +1115,7 @@ class ProfileStatsBar extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.sm,
-        horizontal: AppSpacing.md,
-      ),
+          vertical: AppSpacing.sm, horizontal: AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
         borderRadius: BorderRadius.circular(12),
@@ -1163,10 +1129,7 @@ class ProfileStatsBar extends StatelessWidget {
           GestureDetector(
             onTap: onConnectionsTap,
             child: _StatItem(
-              label: 'Koneksi',
-              value: connectionCount,
-              accent: true,
-            ),
+                label: 'Koneksi', value: connectionCount, accent: true),
           ),
         ],
       ),
@@ -1178,29 +1141,20 @@ class _StatItem extends StatelessWidget {
   final String label;
   final int value;
   final bool accent;
-  const _StatItem({
-    required this.label,
-    required this.value,
-    this.accent = false,
-  });
+  const _StatItem({required this.label, required this.value, this.accent = false});
 
   @override
   Widget build(BuildContext context) => Column(
-    children: [
-      Text(
-        _formatCount(value),
-        style: AppTypography.h2.copyWith(
-          color: accent ? AppColors.cyan : AppColors.textPrimary,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      const SizedBox(height: 2),
-      Text(
-        label,
-        style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
-      ),
-    ],
-  );
+        children: [
+          Text(_formatCount(value),
+              style: AppTypography.h2.copyWith(
+                  color: accent ? AppColors.cyan : AppColors.textPrimary,
+                  fontWeight: FontWeight.w700)),
+          const SizedBox(height: 2),
+          Text(label,
+              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
+        ],
+      );
 
   String _formatCount(int n) {
     if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
@@ -1211,11 +1165,13 @@ class _StatItem extends StatelessWidget {
 
 class _Divider extends StatelessWidget {
   @override
-  Widget build(BuildContext context) =>
-      Container(width: 1, height: 32, color: AppColors.borderSubtle);
+  Widget build(BuildContext context) => Container(
+      width: 1, height: 32, color: AppColors.borderSubtle);
 }
 
 // ProfileTabBar
+/// Tab switcher for Post / Info / Foto / Koneksi.
+/// Purpose: multi-section navigation within profile.
 class ProfileTabBar extends StatelessWidget {
   final int currentIndex;
   final void Function(int) onTabChanged;
@@ -1246,9 +1202,7 @@ class ProfileTabBar extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  vertical: AppSpacing.sm + 2,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -1261,11 +1215,12 @@ class ProfileTabBar extends StatelessWidget {
                   _tabs[i],
                   textAlign: TextAlign.center,
                   style: AppTypography.labelMd.copyWith(
-                    color: isSelected
-                        ? AppColors.cyan
-                        : AppColors.textSecondary,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
+                      color: isSelected
+                          ? AppColors.cyan
+                          : AppColors.textSecondary,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400),
                 ),
               ),
             ),
@@ -1277,6 +1232,8 @@ class ProfileTabBar extends StatelessWidget {
 }
 
 // FriendListTile
+/// Koneksi tile with message + disconnect actions.
+/// Purpose: browsable list of connected users.
 class FriendListTile extends StatelessWidget {
   final UserProfile user;
   final int? mutualCount;
@@ -1298,41 +1255,25 @@ class FriendListTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
       leading: CircleAvatar(
         radius: 26,
         backgroundColor: AppColors.cyan.withValues(alpha: 0.18),
-        backgroundImage: user.avatarUrl != null
-            ? NetworkImage(user.avatarUrl!)
-            : null,
+        backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
         child: user.avatarUrl == null
-            ? Text(
-                user.name[0].toUpperCase(),
-                style: AppTypography.labelMd.copyWith(
-                  color: AppColors.cyan,
-                  fontWeight: FontWeight.w700,
-                ),
-              )
+            ? Text(user.name[0].toUpperCase(),
+                style: AppTypography.labelMd
+                    .copyWith(color: AppColors.cyan, fontWeight: FontWeight.w700))
             : null,
       ),
-      title: Text(
-        user.name,
-        style: AppTypography.labelMd.copyWith(
-          color: AppColors.textPrimary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      title: Text(user.name,
+          style: AppTypography.labelMd
+              .copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
       subtitle: mutualCount != null && mutualCount! > 0
-          ? Text(
-              '$mutualCount koneksi bersama',
-              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
-            )
-          : Text(
-              '@${user.username}',
-              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
-            ),
+          ? Text('$mutualCount koneksi bersama',
+              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted))
+          : Text('@${user.username}',
+              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1358,21 +1299,16 @@ class FriendListTile extends StatelessWidget {
       context: context,
       backgroundColor: AppColors.bgCard,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (_) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: AppSpacing.sm),
           ListTile(
-            leading: const Icon(
-              Icons.person_remove_outlined,
-              color: AppColors.error,
-            ),
-            title: Text(
-              'Putuskan Koneksi',
-              style: AppTypography.labelMd.copyWith(color: AppColors.error),
-            ),
+            leading: const Icon(Icons.person_remove_outlined,
+                color: AppColors.error),
+            title: Text('Putuskan Koneksi',
+                style: AppTypography.labelMd.copyWith(color: AppColors.error)),
             onTap: () {
               Navigator.pop(context);
               onDisconnect?.call();
@@ -1386,6 +1322,8 @@ class FriendListTile extends StatelessWidget {
 }
 
 // FriendRequestCard
+/// Permintaan koneksi masuk dengan tombol Terima/Tolak.
+/// Purpose: manage incoming connection requests.
 class FriendRequestCard extends StatelessWidget {
   final UserProfile user;
   final int? mutualCount;
@@ -1406,9 +1344,7 @@ class FriendRequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.bgCard,
@@ -1422,16 +1358,11 @@ class FriendRequestCard extends StatelessWidget {
             child: CircleAvatar(
               radius: 28,
               backgroundColor: AppColors.magenta.withValues(alpha: 0.18),
-              backgroundImage: user.avatarUrl != null
-                  ? NetworkImage(user.avatarUrl!)
-                  : null,
+              backgroundImage:
+                  user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
               child: user.avatarUrl == null
-                  ? Text(
-                      user.name[0].toUpperCase(),
-                      style: AppTypography.h3.copyWith(
-                        color: AppColors.magenta,
-                      ),
-                    )
+                  ? Text(user.name[0].toUpperCase(),
+                      style: AppTypography.h3.copyWith(color: AppColors.magenta))
                   : null,
             ),
           ),
@@ -1440,20 +1371,14 @@ class FriendRequestCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  user.name,
-                  style: AppTypography.labelMd.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                Text(user.name,
+                    style: AppTypography.labelMd.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600)),
                 if (mutualCount != null && mutualCount! > 0)
-                  Text(
-                    '$mutualCount koneksi bersama',
-                    style: AppTypography.labelSm.copyWith(
-                      color: AppColors.textMuted,
-                    ),
-                  ),
+                  Text('$mutualCount koneksi bersama',
+                      style:
+                          AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
                 const SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
@@ -1465,17 +1390,13 @@ class FriendRequestCard extends StatelessWidget {
                           foregroundColor: AppColors.bgDeep,
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                              borderRadius: BorderRadius.circular(8)),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        child: Text(
-                          'Terima',
-                          style: AppTypography.labelSm.copyWith(
-                            color: AppColors.bgDeep,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        child: Text('Terima',
+                            style: AppTypography.labelSm.copyWith(
+                                color: AppColors.bgDeep,
+                                fontWeight: FontWeight.w600)),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -1487,16 +1408,12 @@ class FriendRequestCard extends StatelessWidget {
                           side: BorderSide(color: AppColors.borderSubtle),
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                              borderRadius: BorderRadius.circular(8)),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        child: Text(
-                          'Tolak',
-                          style: AppTypography.labelSm.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
+                        child: Text('Tolak',
+                            style: AppTypography.labelSm
+                                .copyWith(color: AppColors.textSecondary)),
                       ),
                     ),
                   ],
@@ -1511,6 +1428,7 @@ class FriendRequestCard extends StatelessWidget {
 }
 
 // FriendSuggestionCard
+/// Saran koneksi dengan info mutual + connect button.
 class FriendSuggestionCard extends StatelessWidget {
   final UserProfile user;
   final int mutualCount;
@@ -1541,40 +1459,33 @@ class FriendSuggestionCard extends StatelessWidget {
             alignment: Alignment.topRight,
             child: GestureDetector(
               onTap: onDismiss,
-              child: Icon(Icons.close, size: 16, color: AppColors.textMuted),
+              child: Icon(Icons.close,
+                  size: 16, color: AppColors.textMuted),
             ),
           ),
           CircleAvatar(
             radius: 32,
             backgroundColor: AppColors.cyan.withValues(alpha: 0.18),
-            backgroundImage: user.avatarUrl != null
-                ? NetworkImage(user.avatarUrl!)
-                : null,
+            backgroundImage:
+                user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
             child: user.avatarUrl == null
-                ? Text(
-                    user.name[0].toUpperCase(),
-                    style: AppTypography.h2.copyWith(color: AppColors.cyan),
-                  )
+                ? Text(user.name[0].toUpperCase(),
+                    style: AppTypography.h2.copyWith(color: AppColors.cyan))
                 : null,
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            user.name,
-            style: AppTypography.labelMd.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          Text(user.name,
+              style: AppTypography.labelMd.copyWith(
+                  color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
           if (mutualCount > 0) ...[
             const SizedBox(height: 2),
-            Text(
-              '$mutualCount bersama',
-              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
-              textAlign: TextAlign.center,
-            ),
+            Text('$mutualCount bersama',
+                style:
+                    AppTypography.labelSm.copyWith(color: AppColors.textMuted),
+                textAlign: TextAlign.center),
           ],
           const SizedBox(height: AppSpacing.sm),
           SizedBox(
@@ -1586,18 +1497,13 @@ class FriendSuggestionCard extends StatelessWidget {
                 foregroundColor: AppColors.cyan,
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                    borderRadius: BorderRadius.circular(8)),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 elevation: 0,
               ),
-              child: Text(
-                'Hubungkan',
-                style: AppTypography.labelSm.copyWith(
-                  color: AppColors.cyan,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: Text('Hubungkan',
+                  style: AppTypography.labelSm.copyWith(
+                      color: AppColors.cyan, fontWeight: FontWeight.w600)),
             ),
           ),
         ],
@@ -1607,6 +1513,7 @@ class FriendSuggestionCard extends StatelessWidget {
 }
 
 // AboutInfoTile
+/// Single info tile (lokasi, pekerjaan, pendidikan, dll).
 class AboutInfoTile extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -1623,9 +1530,7 @@ class AboutInfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
-      ),
+          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
       child: Row(
         children: [
           Container(
@@ -1641,18 +1546,10 @@ class AboutInfoTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: AppTypography.labelSm.copyWith(
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                Text(
-                  value,
-                  style: AppTypography.bodyMd.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
-                ),
+                Text(label,
+                    style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
+                Text(value,
+                    style: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary)),
               ],
             ),
           ),
@@ -1663,6 +1560,7 @@ class AboutInfoTile extends StatelessWidget {
 }
 
 // PhotoAlbumGridItem
+/// Single item in photo album grid on profile.
 class PhotoAlbumGridItem extends StatelessWidget {
   final String imageUrl;
   final VoidCallback? onTap;
@@ -1680,10 +1578,8 @@ class PhotoAlbumGridItem extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => Container(
             color: AppColors.bgSurface,
-            child: Icon(
-              Icons.broken_image_outlined,
-              color: AppColors.textMuted,
-            ),
+            child: Icon(Icons.broken_image_outlined,
+                color: AppColors.textMuted),
           ),
         ),
       ),
@@ -1692,6 +1588,7 @@ class PhotoAlbumGridItem extends StatelessWidget {
 }
 
 // EditProfileFormField
+/// Styled form field for edit profile screen.
 class EditProfileFormField extends StatelessWidget {
   final String label;
   final String? hint;
@@ -1723,13 +1620,9 @@ class EditProfileFormField extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: AppTypography.labelSm.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Text(label,
+              style: AppTypography.labelSm.copyWith(
+                  color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           TextFormField(
             controller: controller,
@@ -1741,9 +1634,7 @@ class EditProfileFormField extends StatelessWidget {
             style: AppTypography.bodyMd.copyWith(color: AppColors.textPrimary),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: AppTypography.bodyMd.copyWith(
-                color: AppColors.textMuted,
-              ),
+              hintStyle: AppTypography.bodyMd.copyWith(color: AppColors.textMuted),
               filled: true,
               fillColor: AppColors.bgSurface,
               suffixIcon: suffixIcon,
@@ -1764,9 +1655,7 @@ class EditProfileFormField extends StatelessWidget {
                 borderSide: const BorderSide(color: AppColors.error),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm + 2,
-              ),
+                  horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
             ),
           ),
         ],

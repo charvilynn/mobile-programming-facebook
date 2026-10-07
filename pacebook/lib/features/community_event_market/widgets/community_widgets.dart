@@ -3,13 +3,13 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/constants/app_spacing.dart';
 
-
+// Models
 class GroupModel {
   final int id;
   final String name;
   final String? description;
   final String? avatarUrl;
-  final String privacy; 
+ final String privacy; // 'public' | 'private'
   final int memberCount;
   final bool isMember;
 
@@ -51,7 +51,7 @@ class MarketItem {
   final String title;
   final String? description;
   final double price;
-  final String condition; 
+ final String condition; // 'new' | 'used'
   final String category;
   final String? imageUrl;
   final String sellerName;
@@ -68,6 +68,9 @@ class MarketItem {
   });
 }
 
+// GroupCard
+/// Komunitas card dengan avatar, nama, member count, join button.
+/// Purpose: browsable card list for discovering communities.
 class GroupCard extends StatelessWidget {
   final GroupModel group;
   final VoidCallback? onTap;
@@ -95,13 +98,14 @@ class GroupCard extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         child: Row(
           children: [
-            SizedBox(
-              width: 72,
-              height: 72,
+ // Avatar
+            Container(
+              width: 80,
+              height: 80,
+              color: AppColors.bgMuted,
               child: group.avatarUrl != null
                   ? Image.network(group.avatarUrl!, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          _GroupAvatarPlaceholder(group.name))
+                      errorBuilder: (_, __, ___) => _GroupAvatarPlaceholder(group.name))
                   : _GroupAvatarPlaceholder(group.name),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -111,36 +115,35 @@ class GroupCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      group.name,
-                      style: AppTypography.labelMd.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(group.name,
+                              style: AppTypography.labelMd.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        if (group.privacy == 'private')
+                          Icon(Icons.lock_outline,
+                              size: 14, color: AppColors.textMuted),
+                      ],
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      '${group.memberCount} anggota • ${group.privacy == 'private' ? 'Privat' : 'Publik'}',
-                      style: AppTypography.labelSm
-                          .copyWith(color: AppColors.textMuted),
-                    ),
+                    Text('${group.memberCount} anggota',
+                        style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
                     if (group.description != null) ...[
                       const SizedBox(height: 2),
-                      Text(
-                        group.description!,
-                        style: AppTypography.bodySm
-                            .copyWith(color: AppColors.textSecondary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      Text(group.description!,
+                          style: AppTypography.labelSm.copyWith(color: AppColors.textSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
                     ],
                   ],
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.md),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: group.isMember
                   ? OutlinedButton(
                       onPressed: onTap,
@@ -191,6 +194,8 @@ class _GroupAvatarPlaceholder extends StatelessWidget {
       );
 }
 
+// GroupFeedPostTile
+/// Compact post tile for community feed.
 class GroupFeedPostTile extends StatelessWidget {
   final String authorName;
   final String? authorAvatar;
@@ -277,12 +282,14 @@ class GroupFeedPostTile extends StatelessWidget {
   String _timeAgo(DateTime dt) {
     final diff = DateTime.now().difference(dt);
     if (diff.inMinutes < 1) return 'baru';
-    if (diff.inMinutes < 1) return '${diff.inMinutes}m';
+    if (diff.inHours < 1) return '${diff.inMinutes}m';
     if (diff.inDays < 1) return '${diff.inHours}j';
     return '${diff.inDays}h';
   }
 }
 
+// EventCard
+/// Agenda card with date badge, title, location, attend button.
 class EventCard extends StatelessWidget {
   final EventModel event;
   final VoidCallback? onTap;
@@ -306,6 +313,7 @@ class EventCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+ // Date badge
             Container(
               width: 52,
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
@@ -391,6 +399,8 @@ class EventCard extends StatelessWidget {
   }
 }
 
+// EventCalendarStrip
+/// Horizontal scroll strip showing next 14 days.
 class EventCalendarStrip extends StatefulWidget {
   final DateTime selectedDate;
   final void Function(DateTime) onDateSelected;
@@ -486,6 +496,8 @@ class _EventCalendarStripState extends State<EventCalendarStrip> {
   }
 }
 
+// MarketplaceItemCard
+/// Product listing card with image, price, condition.
 class MarketplaceItemCard extends StatelessWidget {
   final MarketItem item;
   final VoidCallback? onTap;
@@ -506,6 +518,7 @@ class MarketplaceItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+ // Image
             AspectRatio(
               aspectRatio: 1,
               child: item.imageUrl != null
@@ -575,6 +588,8 @@ class _ItemImagePlaceholder extends StatelessWidget {
       );
 }
 
+// MarketplaceCategoryChip
+/// Filter chip for marketplace category.
 class MarketplaceCategoryChip extends StatelessWidget {
   final String label;
   final bool isSelected;
@@ -611,6 +626,8 @@ class MarketplaceCategoryChip extends StatelessWidget {
       );
 }
 
+// SettingsMenuTile
+/// Settings list item with icon, label, optional trailing.
 class SettingsMenuTile extends StatelessWidget {
   final IconData icon;
   final Color? iconColor;
@@ -664,6 +681,8 @@ class SettingsMenuTile extends StatelessWidget {
   }
 }
 
+// ThemeToggleSwitch
+/// Dark/light mode toggle switch in settings.
 class ThemeToggleSwitch extends StatelessWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onChanged;
@@ -723,6 +742,8 @@ class ThemeToggleSwitch extends StatelessWidget {
   }
 }
 
+// SearchResultTabView
+/// Tabbed search results (orang / postingan / komunitas).
 class SearchResultTabView extends StatefulWidget {
   final String query;
   const SearchResultTabView({super.key, required this.query});
@@ -804,6 +825,8 @@ class _SearchPlaceholder extends StatelessWidget {
       );
 }
 
+// AnimatedSearchBar
+/// Expandable search bar with animated width/opacity.
 class AnimatedSearchBar extends StatefulWidget {
   final void Function(String) onSearch;
   final String hint;
@@ -894,452 +917,6 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
           onPressed: _toggle,
         ),
       ],
-    );
-  }
-}
-
-class EventCard extends StatelessWidget {
-  final EventModel event;
-  final VoidCallback? onTap;
-  final VoidCallback? onAttend;
-
-  const EventCard({super.key, required this.event, this.onTap, this.onAttend});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.borderSubtle),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 52,
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-              decoration: BoxDecoration(
-                color: AppColors.cyan.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.cyan.withValues(alpha: 0.3)),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    _monthShort(event.startTime),
-                    style: AppTypography.labelSm
-                        .copyWith(color: AppColors.cyan, fontSize: 10),
-                  ),
-                  Text(
-                    '${event.startTime.day}',
-                    style: AppTypography.h2.copyWith(
-                        color: AppColors.cyan, fontWeight: FontWeight.w700),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(event.name,
-                      style: AppTypography.labelMd.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
-                  if (event.location != null)
-                    Row(
-                      children: [
-                        Icon(Icons.location_on_outlined,
-                            size: 12, color: AppColors.textMuted),
-                        const SizedBox(width: 2),
-                        Expanded(
-                          child: Text(event.location!,
-                              style: AppTypography.labelSm
-                                  .copyWith(color: AppColors.textMuted),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis),
-                        ),
-                      ],
-                    ),
-                  const SizedBox(height: 4),
-                  Text('${event.attendeeCount} hadir',
-                      style: AppTypography.labelSm.copyWith(color: AppColors.textMuted)),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: onAttend,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    event.isAttending ? AppColors.bgSurface : AppColors.cyan,
-                foregroundColor: event.isAttending
-                    ? AppColors.textSecondary
-                    : AppColors.bgDeep,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 6),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Text(event.isAttending ? 'Hadir' : 'Ikut',
-                  style: AppTypography.labelSm.copyWith(
-                      fontWeight: FontWeight.w600)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _monthShort(DateTime dt) {
-    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    return months[dt.month - 1];
-  }
-}
-
-class EventCalendarStrip extends StatefulWidget {
-  final DateTime selectedDate;
-  final void Function(DateTime) onDateSelected;
-  final Set<DateTime> eventDates;
-
-  const EventCalendarStrip({
-    super.key,
-    required this.selectedDate,
-    required this.onDateSelected,
-    this.eventDates = const {},
-  });
-
-  @override
-  State<EventCalendarStrip> createState() => _EventCalendarStripState();
-}
-
-class _EventCalendarStripState extends State<EventCalendarStrip> {
-  late DateTime _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = widget.selectedDate;
-  }
-
-  static const _days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-
-  @override
-  Widget build(BuildContext context) {
-    final today = DateTime.now();
-    return SizedBox(
-      height: 72,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        itemCount: 14,
-        itemBuilder: (_, i) {
-          final date = today.add(Duration(days: i));
-          final isSelected = _selected.day == date.day &&
-              _selected.month == date.month;
-          final hasEvent = widget.eventDates.any((e) =>
-              e.day == date.day && e.month == date.month);
-
-          return GestureDetector(
-            onTap: () {
-              setState(() => _selected = date);
-              widget.onDateSelected(date);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-              width: 44,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.cyan
-                    : AppColors.bgSurface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: isSelected
-                        ? AppColors.cyan
-                        : AppColors.borderSubtle),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(_days[date.weekday % 7],
-                      style: AppTypography.labelSm.copyWith(
-                          color: isSelected
-                              ? AppColors.bgDeep
-                              : AppColors.textMuted,
-                          fontSize: 10)),
-                  Text('${date.day}',
-                      style: AppTypography.labelMd.copyWith(
-                          color: isSelected
-                              ? AppColors.bgDeep
-                              : AppColors.textPrimary,
-                          fontWeight: FontWeight.w700)),
-                  if (hasEvent)
-                    Container(
-                      width: 4, height: 4,
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppColors.bgDeep : AppColors.magenta,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-class MarketplaceItemCard extends StatelessWidget {
-  final MarketItem item;
-  final VoidCallback? onTap;
-
-  const MarketplaceItemCard({super.key, required this.item, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderSubtle),
-        ),
-        clipBehavior: Clip.hardEdge,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: item.imageUrl != null
-                  ? Image.network(item.imageUrl!, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _ItemImagePlaceholder())
-                  : _ItemImagePlaceholder(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.title,
-                      style: AppTypography.labelMd.copyWith(
-                          color: AppColors.textPrimary),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Rp ${_formatPrice(item.price)}',
-                    style: AppTypography.labelMd.copyWith(
-                        color: AppColors.cyan, fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 2),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: item.condition == 'new'
-                          ? AppColors.success.withValues(alpha: 0.15)
-                          : AppColors.warning.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      item.condition == 'new' ? 'Baru' : 'Bekas',
-                      style: AppTypography.labelSm.copyWith(
-                          color: item.condition == 'new'
-                              ? AppColors.success
-                              : AppColors.warning,
-                          fontSize: 10),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatPrice(double p) {
-    if (p >= 1000000) return '${(p / 1000000).toStringAsFixed(1)}jt';
-    if (p >= 1000) return '${(p / 1000).toStringAsFixed(0)}rb';
-    return p.toStringAsFixed(0);
-  }
-}
-
-class _ItemImagePlaceholder extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Container(
-        color: AppColors.bgSurface,
-        child: Center(
-          child: Icon(Icons.inventory_2_outlined,
-              color: AppColors.textMuted, size: 40),
-        ),
-      );
-}
-
-class MarketplaceCategoryChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const MarketplaceCategoryChip({
-    super.key,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.only(right: AppSpacing.sm),
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md, vertical: AppSpacing.xs),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.cyan : AppColors.bgSurface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-                color: isSelected ? AppColors.cyan : AppColors.borderSubtle),
-          ),
-          child: Text(
-            label,
-            style: AppTypography.labelSm.copyWith(
-                color: isSelected ? AppColors.bgDeep : AppColors.textSecondary,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400),
-          ),
-        ),
-      );
-}
-
-class SettingsMenuTile extends StatelessWidget {
-  final IconData icon;
-  final Color? iconColor;
-  final String title;
-  final String? subtitle;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-  final bool isDestructive;
-
-  const SettingsMenuTile({
-    super.key,
-    required this.icon,
-    this.iconColor,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.onTap,
-    this.isDestructive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isDestructive
-        ? AppColors.error
-        : (iconColor ?? AppColors.textSecondary);
-
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: 2),
-      leading: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: color, size: 20),
-      ),
-      title: Text(
-        title,
-        style: AppTypography.labelMd.copyWith(
-          color: isDestructive ? AppColors.error : AppColors.textPrimary,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
-            )
-          : null,
-      trailing: trailing ??
-          Icon(Icons.chevron_right,
-              color: AppColors.textMuted, size: 20),
-    );
-  }
-}
-
-  final bool isDarkMode;
-  final ValueChanged<bool> onChanged;
-
-  const ThemeToggleSwitch({
-    super.key,
-    required this.isDarkMode,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.cyan.withValues(alpha: 0.12)
-                  : AppColors.warning.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
-              color: isDarkMode ? AppColors.cyan : AppColors.warning,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Tema Gelap',
-                  style: AppTypography.labelMd.copyWith(color: AppColors.textPrimary),
-                ),
-                Text(
-                  isDarkMode
-                      ? 'Cyberpunk Dark aktif'
-                      : 'Light Mode aktif',
-                  style: AppTypography.labelSm.copyWith(color: AppColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-          Switch.adaptive(
-            value: isDarkMode,
-            activeColor: AppColors.cyan,
-            onChanged: onChanged,
-          ),
-        ],
-      ),
     );
   }
 }
